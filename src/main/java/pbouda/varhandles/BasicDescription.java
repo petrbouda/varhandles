@@ -3,7 +3,7 @@ package pbouda.varhandles;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
-public class OpaqueMode {
+public class BasicDescription {
 
     /*
      * Mark VOLATILE the fields which are used by VarHandle
@@ -23,7 +23,7 @@ public class OpaqueMode {
     static {
         try {
             X = MethodHandles.lookup()
-                    .findVarHandle(OpaqueMode.class, "x", int.class);
+                    .findVarHandle(BasicDescription.class, "x", int.class);
 
         } catch (ReflectiveOperationException roe) {
             throw new RuntimeException("Something Wrong With Our VarHandle", roe);
