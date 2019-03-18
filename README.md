@@ -46,7 +46,7 @@ public class BasicDescription {
 
 ```
     |===============================================================|
-    | PLAIN															|
+    | PLAIN                                                         |
     |---------------------------------------------------------------|
     | => No support for inter-thread communication                  |
     | => Does not tak into account any changes on particular        |
@@ -64,7 +64,7 @@ public class BasicDescription {
     | which is not going to change anytime and just for the sake of |
     | compiler optimizations.                                       |
     |                                                               |
-    | No ordering and no certain visibility.						|
+    | No ordering and no certain visibility.                        |
     | Plain mode can skip, postpone, reorder some writes            |
     |===============================================================|
 ```
@@ -74,7 +74,7 @@ public class BasicDescription {
 ```
     |===============================================================|
     |---------------------------------------------------------------|
-    | OPAQUE														|
+    | OPAQUE                                                        |
     |---------------------------------------------------------------|
     | Coherence:                                                    |
     |                                                               |
@@ -88,7 +88,7 @@ public class BasicDescription {
     |                                                               |
     | Progress:                                                     |
     |                                                               |
-    | WRITES ARE EVENTUALLY VISIBLE (EVENTUAL CONSISTENCY)	        |
+    | WRITES ARE EVENTUALLY VISIBLE (EVENTUAL CONSISTENCY)          |
     |                                                               |
     | EXAMPLE:                                                      |
     |                                                               |
@@ -118,8 +118,8 @@ public class BasicDescription {
     |                                                               |
     | This rules out several anomalies described above with         |
     | Plain mode, including those in which future accesses appear   |
-    | to impact the past, but only with respect to a single			| 
-    | variable														|
+    | to impact the past, but only with respect to a single         | 
+    | variable.                                                     |
     |                                                               |
     | Bitwise Atomicity:                                            |
     |                                                               |
@@ -152,9 +152,9 @@ public class BasicDescription {
     
 ```
     |===============================================================|
-    | RELEASE/ACQUIRE 												|
+    | RELEASE/ACQUIRE                                               |
     |---------------------------------------------------------------|
-    | VarHandle setRelease, getAcquire							    |
+    | VarHandle setRelease, getAcquire                              |
     |                                                               |
     | - Adds a causality constraint to Opaque mode                  |
     | - For each variable, the antecedence relation, restricted     |
