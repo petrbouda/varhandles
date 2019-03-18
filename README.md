@@ -232,10 +232,8 @@ public class BasicDescription {
 
 ```
 => an Array with an effect of VOLATILE access
+- atomic update is not supported
 
 VarHandle arrayVarHandle = MethodHandles.arrayElementVarHandle(int[].class);
- 
-assertThat(arrayVarHandle.coordinateTypes().size() == 2);
-assertThat(arrayVarHandle.coordinateTypes().get(0) == int[].class);
 ```
    
