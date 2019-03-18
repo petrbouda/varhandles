@@ -10,7 +10,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 
 import static org.openjdk.jcstress.annotations.Expect.ACCEPTABLE;
-import static org.openjdk.jcstress.annotations.Expect.FORBIDDEN;
 
 public class PlainCross {
 
