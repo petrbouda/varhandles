@@ -12,18 +12,15 @@ import java.lang.invoke.VarHandle;
 import static org.openjdk.jcstress.annotations.Expect.ACCEPTABLE;
 import static org.openjdk.jcstress.annotations.Expect.FORBIDDEN;
 
-public class ReleaseAcquireCross {
+public class PlainCross {
 
 
     /*
-
-     Observed	TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	Expectation
-     0, 0	    19615965	18735786	7024334	    10332977	136755	    12876	ACCEPTABLE
-     0, 1	    40463436	30927745	49286768	40137598	41579632	989574	ACCEPTABLE
-     1, 0	    62363900	59819926	52920649	49440063	60507243	1331892	ACCEPTABLE
-     1, 1	    1020	    1304	    30	        83	        106261	    5319	ACCEPTABLE
-
-     => [0, 0] - Violates Sequential Consistency!
+        Observed 	TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	    Expectation
+        0, 0	    149262227	3978693	    20902071	3774049	    1839863	    0	        ACCEPTABLE
+        0, 1	    22606616	42907342	36605789	53677276	50962050	1462208	    ACCEPTABLE
+        1, 0	    21073271	60953968	60661295	52761455	61100158	718272	    ACCEPTABLE
+        1, 1	    27377	    10718	    596	        181	        9540	    314181	    ACCEPTABLE
     */
     @JCStressTest
     @Outcome(id = "1, 1", expect = ACCEPTABLE)
@@ -47,7 +44,6 @@ public class ReleaseAcquireCross {
                 Y = MethodHandles.lookup()
                         .findVarHandle(BothAtomicCross.class, "y", int.class);
 
-
             } catch (ReflectiveOperationException roe) {
                 throw new RuntimeException("Something Wrong With Our VarHandle", roe);
             }
@@ -55,35 +51,29 @@ public class ReleaseAcquireCross {
 
         @Actor
         public void actor1(II_Result r) {
-            X.setRelease(this, 1);
-            r.r2 = (int) Y.getAcquire(this);
+            X.set(this, 1);
+            r.r2 = (int) Y.get(this);
         }
 
         @Actor
         public void actor2(II_Result r) {
-            Y.setRelease(this, 1);
-            r.r1 = (int) X.getAcquire(this);
+            Y.set(this, 1);
+            r.r1 = (int) X.get(this);
         }
     }
 
     /*
-
-     Observed	TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	    Expectation
-     0, 0	    7305490 	9842654	    4766842	    2860500	    44771304	383802	    ACCEPTABLE
-     0, 1	    159968	    399434  	111109	    51778	    636701	    197610	    ACCEPTABLE
-     1, 1	    131890603	132865013	143404990	138931213	69634996	1645009	    ACCEPTABLE
-
-     => COHERENCY is visible
-            - there are results with 1s
-            - but we can also see [0, 0] which means there is no TOTAL ORDER
-            - result just weren't propagated yet (EVENTUAL CONSISTENCY)
-     => CAUSALITY is applied only for ordinary READS/WRITES
-            - if ATOMIC WRITE is available then even all ORDINARY WRITES before are available
+        Observed 	    TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	    Expectation
+        0, 0	        6019206	    5375986	    10399818	8641355	    5658283	    1224259	    ACCEPTABLE
+        0, 1	        172342	    169669	    211046	    187853	    161495	    712053	    ACCEPTABLE
+        1, 0	        17101	    2573	    21342	    44	        0	        0	        ACCEPTABLE
+        1, 1	        181721352	155823203	173073645	183787269	129755963	1533649	    ACCEPTABLE
     */
     @JCStressTest
     @Outcome(id = "1, 1", expect = ACCEPTABLE)
-    @Outcome(id = "1, 0", expect = FORBIDDEN)
+    @Outcome(id = "1, 0", expect = ACCEPTABLE)
     @Outcome(id = "0, 1", expect = ACCEPTABLE)
+    @Outcome(id = "0, 0", expect = ACCEPTABLE)
     @State
     public static class NonSynchronizedCross {
 
@@ -105,12 +95,12 @@ public class ReleaseAcquireCross {
         @Actor
         public void actor1() {
             y = 1;
-            X.setRelease(this, 1);
+            X.set(this, 1);
         }
 
         @Actor
         public void actor2(II_Result r) {
-            r.r1 = (int) X.getAcquire(this);
+            r.r1 = (int) X.get(this);
             r.r2 = y;
         }
     }

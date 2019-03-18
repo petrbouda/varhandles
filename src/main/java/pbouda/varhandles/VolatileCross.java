@@ -12,16 +12,15 @@ import java.lang.invoke.VarHandle;
 import static org.openjdk.jcstress.annotations.Expect.ACCEPTABLE;
 import static org.openjdk.jcstress.annotations.Expect.FORBIDDEN;
 
-public class ReleaseAcquireCross {
+public class VolatileCross {
 
 
     /*
 
-     Observed	TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	Expectation
-     0, 0	    19615965	18735786	7024334	    10332977	136755	    12876	ACCEPTABLE
-     0, 1	    40463436	30927745	49286768	40137598	41579632	989574	ACCEPTABLE
-     1, 0	    62363900	59819926	52920649	49440063	60507243	1331892	ACCEPTABLE
-     1, 1	    1020	    1304	    30	        83	        106261	    5319	ACCEPTABLE
+     Observed	    TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	    Expectation
+     0, 1	        18713063	35909611	64674743	34016730	30830492	1236050	    ACCEPTABLE
+     1, 0	        43935390	41614007	46674945	34645648	45118566	879028	    ACCEPTABLE
+     1, 1	        277718	    553633	    427893	    321553	    564153	    239703	    ACCEPTABLE
 
      => [0, 0] - Violates Sequential Consistency!
     */
@@ -29,7 +28,6 @@ public class ReleaseAcquireCross {
     @Outcome(id = "1, 1", expect = ACCEPTABLE)
     @Outcome(id = "1, 0", expect = ACCEPTABLE)
     @Outcome(id = "0, 1", expect = ACCEPTABLE)
-    @Outcome(id = "0, 0", expect = ACCEPTABLE)
     @State
     public static class BothAtomicCross {
 
@@ -47,7 +45,6 @@ public class ReleaseAcquireCross {
                 Y = MethodHandles.lookup()
                         .findVarHandle(BothAtomicCross.class, "y", int.class);
 
-
             } catch (ReflectiveOperationException roe) {
                 throw new RuntimeException("Something Wrong With Our VarHandle", roe);
             }
@@ -55,23 +52,23 @@ public class ReleaseAcquireCross {
 
         @Actor
         public void actor1(II_Result r) {
-            X.setRelease(this, 1);
-            r.r2 = (int) Y.getAcquire(this);
+            X.setVolatile(this, 1);
+            r.r2 = (int) Y.getVolatile(this);
         }
 
         @Actor
         public void actor2(II_Result r) {
-            Y.setRelease(this, 1);
-            r.r1 = (int) X.getAcquire(this);
+            Y.setVolatile(this, 1);
+            r.r1 = (int) X.getVolatile(this);
         }
     }
 
     /*
 
-     Observed	TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	    Expectation
-     0, 0	    7305490 	9842654	    4766842	    2860500	    44771304	383802	    ACCEPTABLE
-     0, 1	    159968	    399434  	111109	    51778	    636701	    197610	    ACCEPTABLE
-     1, 1	    131890603	132865013	143404990	138931213	69634996	1645009	    ACCEPTABLE
+        Observed	TC 1	    TC 2	    TC 3	    TC 4	    TC 5	    TC 6	    Expectation
+        0, 0	    129420036	113640565	198439588	109525537	69266555	559628	    ACCEPTABLE
+        0, 1	    648864	    786680	    164301	    393237	    1065387	    553819	    ACCEPTABLE
+        1, 1	    16039141	12272466	6094632	    23615717	40781409	2041374	    ACCEPTABLE
 
      => COHERENCY is visible
             - there are results with 1s
@@ -79,6 +76,8 @@ public class ReleaseAcquireCross {
             - result just weren't propagated yet (EVENTUAL CONSISTENCY)
      => CAUSALITY is applied only for ordinary READS/WRITES
             - if ATOMIC WRITE is available then even all ORDINARY WRITES before are available
+     => SEQUENTIAL CONSISTENCY
+            - all operation are sequential consistent (immediately visible)
     */
     @JCStressTest
     @Outcome(id = "1, 1", expect = ACCEPTABLE)
@@ -105,12 +104,12 @@ public class ReleaseAcquireCross {
         @Actor
         public void actor1() {
             y = 1;
-            X.setRelease(this, 1);
+            X.setVolatile(this, 1);
         }
 
         @Actor
         public void actor2(II_Result r) {
-            r.r1 = (int) X.getAcquire(this);
+            r.r1 = (int) X.getVolatile(this);
             r.r2 = y;
         }
     }
