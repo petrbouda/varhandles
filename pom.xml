@@ -14,15 +14,21 @@
 
     <dependencies>
         <dependency>
+            <groupId>net.sf.jopt-simple</groupId>
+            <artifactId>jopt-simple</artifactId>
+            <version>5.0.4</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.openjdk.jcstress</groupId>
             <artifactId>jcstress-core</artifactId>
-            <version>0.5</version>
+            <version>0.7</version>
         </dependency>
 
         <dependency>
             <groupId>org.openjdk.jcstress</groupId>
             <artifactId>jcstress-samples</artifactId>
-            <version>0.5</version>
+            <version>0.7</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
