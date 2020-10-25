@@ -4,7 +4,6 @@ import org.openjdk.jcstress.annotations.Actor;
 import org.openjdk.jcstress.annotations.JCStressTest;
 import org.openjdk.jcstress.annotations.Outcome;
 import org.openjdk.jcstress.annotations.State;
-import org.openjdk.jcstress.infra.results.II_Result;
 import org.openjdk.jcstress.infra.results.I_Result;
 
 import java.lang.invoke.VarHandle;
@@ -37,7 +36,7 @@ public class Fences {
             //  provide a LoadLoad barrier also provide a LoadStore barrier for free.
             //  @since 1.8
             //
-            // VarHandle.storeStoreFence();
+            VarHandle.storeStoreFence();
             y = 1;
         }
 
